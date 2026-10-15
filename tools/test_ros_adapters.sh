@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 # Ubuntu 22.04 / ROS 2 Humble; build only vendor interfaces, never launch CAN.
-set -euo pipefail
+set -eo pipefail
+# ROS 2 generated setup scripts access optional environment variables that may be
+# unset. Do not enable bash nounset (-u) while sourcing ROS/colcon overlays.
 task_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$task_root"
+if [[ ! -f /opt/ros/humble/setup.bash ]]; then
+  echo 'ROS 2 Humble is missing: /opt/ros/humble/setup.bash' >&2
+  exit 2
+fi
 source /opt/ros/humble/setup.bash
 # Prefer the versioned vendor ROS 2 source bundled in this repository.
 # FWM_VENDOR_ROS2_DIR may override it for another tested vendor revision.
