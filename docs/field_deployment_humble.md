@@ -111,3 +111,24 @@ G4 — Femto Bolt 彩色/深度/点云可用；
 G5 — 后续单独开发 RTAB-Map 建图/定位、Nav2 与 AprilTag 自动初始化。
 
 **明天先做 G0–G4，不要在 CAN 尚未稳定时同时调 Nav2。**
+
+## 8. 已存在 project 目录和 AMENT_TRACE_SETUP_FILES 报错
+
+已有 `~/fwmini_ws/project` 时不要再次直接 `git clone ... project`；如果它是本工程的 Git checkout，先检查并更新：
+
+    cd ~/fwmini_ws
+    git -C project status -sb
+    git -C project remote -v
+    git -C project pull --ff-only origin main
+
+如果 `project` 不是 Git 仓库或指向别的远端，不要覆盖；改为：
+
+    git clone https://github.com/Aldoubt/fwmini_navigation_lab.git project_fresh
+    cd project_fresh
+
+`/opt/ros/humble/setup.bash: AMENT_TRACE_SETUP_FILES: unbound variable` 的根源是测试脚本先设置了 `set -u`，再 source ROS 2/colcon setup。已在 GitHub 修复：测试脚本改用 `set -eo pipefail`（仍保留出错退出和管道失败检测，但不启用 nounset）。本地仓库更新后再运行：
+
+    source /opt/ros/humble/setup.bash
+    bash tools/test_ros_adapters.sh
+
+如果私有仓库 `git pull` 提示身份认证失败，需要先在工控机完成 GitHub CLI 登录或使用已配置的 SSH 密钥。不要把令牌写进仓库或终端命令历史。 
