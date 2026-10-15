@@ -1,0 +1,10 @@
+uint8 UNINITIALIZED=0
+uint8 TRACKING=1
+uint8 DEGRADED=2
+uint8 LOST=3
+std_msgs/Header header
+uint8 state
+string map_id
+string source
+string reason
+builtin_interfaces/Time last_anchor_stamp

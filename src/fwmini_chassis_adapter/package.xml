@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>fwmini_chassis_adapter</name>
+  <version>0.1.0</version>
+  <description>FW-mini isolated fwmini_chassis_adapter for ROS 2 Humble</description>
+  <maintainer email="maintainer@example.com">FW-mini maintainers</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>yhs_can_interfaces</depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>launch_testing</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

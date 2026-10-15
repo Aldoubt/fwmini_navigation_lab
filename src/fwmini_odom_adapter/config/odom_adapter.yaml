@@ -1,0 +1,13 @@
+fwmini_odom_adapter:
+  ros__parameters:
+    feedback_topic: /chassis_info_fb
+    odom_topic: /wheel/odom
+    feedback_profile: reviewed_yhs_ros2
+    feedback_timeout: 0.2
+    max_dt: 0.2
+    future_tolerance: 0.05
+    publish_tf: true
+    # Provisional diagonal variances, NOT a calibrated covariance model.
+    # Order: x y z roll pitch yaw.
+    pose_variance: [0.01, 0.01, 1000000.0, 1000000.0, 1000000.0, 0.02]
+    twist_variance: [0.01, 0.01, 1000000.0, 1000000.0, 1000000.0, 0.02]

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>tag_follow_controller</name><version>0.1.0</version>
+  <description>FW-mini tag_follow_controller isolated runtime</description>
+  <maintainer email="maintainer@example.com">FW-mini maintainers</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>fwmini_interfaces</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <exec_depend>launch</exec_depend><exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <export><build_type>ament_cmake</build_type></export>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>launch_testing</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>sensor_msgs</test_depend>
+  <test_depend>yhs_can_interfaces</test_depend>
+  <test_depend>fwmini_chassis_adapter</test_depend>
+  <test_depend>apriltag_detector_adapter</test_depend>
+  <test_depend>apriltag_ros</test_depend>
+  <test_depend>image_proc</test_depend>
+</package>

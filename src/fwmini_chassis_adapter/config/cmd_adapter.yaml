@@ -1,0 +1,12 @@
+fwmini_chassis_adapter:
+  ros__parameters:
+    command_topic: /cmd_vel
+    vendor_command_topic: /ctrl_cmd
+    max_linear_x: 0.3  # m/s, provisional experiment limits
+    max_linear_y: 0.3  # m/s
+    max_angular_z: 0.5 # rad/s
+    cmd_timeout: 0.2   # steady-clock seconds
+    publish_rate: 50.0
+    vendor_linear_unit: mps  # YHS ROS driver packs mm/s internally
+    vendor_angular_unit: degps
+    control_gear: 0  # Must confirm gear/mode with vendor before physical motion.

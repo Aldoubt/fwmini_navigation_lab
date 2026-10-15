@@ -1,0 +1,10 @@
+apriltag_detector_adapter:
+  ros__parameters:
+    target_id: 0
+    family: tag36h11
+    tag_frame: fwmini_observed_tag
+    detections_topic: /fwmini/tags/raw_detections
+    output_topic: /tag_detection
+    max_hamming: 0
+    min_decision_margin: 30.0 # provisional, calibrate with collected images
+    observation_timeout: 0.2

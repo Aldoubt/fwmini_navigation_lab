@@ -1,0 +1,7 @@
+# Pose is T_map_base at its observation stamp, not T_map_odom.
+geometry_msgs/PoseWithCovarianceStamped pose
+string map_id
+string source
+---
+bool accepted
+string reason

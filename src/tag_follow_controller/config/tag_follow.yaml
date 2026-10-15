@@ -1,0 +1,17 @@
+tag_follow_controller:
+  ros__parameters:
+    target_id: 0
+    detection_topic: /tag_detection
+    command_topic: /cmd_vel
+    extrinsics_verified: false # Leave false until measured mount TF is installed.
+    desired_distance: 0.8
+    min_distance: 0.3
+    max_distance: 5.0
+    linear_gain: 0.4
+    angular_gain: 1.0
+    max_linear_x: 0.2
+    max_angular_z: 0.4
+    distance_deadband: 0.05
+    angle_deadband: 0.03
+    turn_threshold: 0.3
+    tag_timeout: 0.2

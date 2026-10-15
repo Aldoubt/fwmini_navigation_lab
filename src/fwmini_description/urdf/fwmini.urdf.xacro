@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fwmini">
+  <xacro:arg name="geometry_file" default=""/>
+  <xacro:property name="g" value="${xacro.load_yaml('$(arg geometry_file)')}"/>
+  <link name="base_link">
+    <visual><origin xyz="0 0 ${g['body']['height_m']/2}"/><geometry><box size="${g['body']['length_m']} ${g['body']['width_m']} ${g['body']['height_m']}"/></geometry></visual>
+    <collision><origin xyz="0 0 ${g['body']['height_m']/2}"/><geometry><box size="${g['body']['length_m']} ${g['body']['width_m']} ${g['body']['height_m']}"/></geometry></collision>
+  </link>
+  <link name="femto_bolt_link"/>
+  <joint name="camera_mount" type="fixed"><parent link="base_link"/><child link="femto_bolt_link"/><origin xyz="${g['camera_mount']['xyz_m'][0]} ${g['camera_mount']['xyz_m'][1]} ${g['camera_mount']['xyz_m'][2]}" rpy="${g['camera_mount']['rpy_rad'][0]} ${g['camera_mount']['rpy_rad'][1]} ${g['camera_mount']['rpy_rad'][2]}"/></joint>
+  <link name="femto_bolt_color_optical_frame"/>
+  <joint name="color_optical" type="fixed"><parent link="femto_bolt_link"/><child link="femto_bolt_color_optical_frame"/><origin xyz="${g['color_optical']['xyz_m'][0]} ${g['color_optical']['xyz_m'][1]} ${g['color_optical']['xyz_m'][2]}" rpy="${g['color_optical']['rpy_rad'][0]} ${g['color_optical']['rpy_rad'][1]} ${g['color_optical']['rpy_rad'][2]}"/></joint>
+</robot>
