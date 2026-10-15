@@ -27,7 +27,7 @@ Windows static checks and C++ core tests passed, but **ROS 2 Humble node builds,
 
 The first-day acceptance sequence is: compile → verify real YHS CAN feedback → wheel odometry → guarded 0.05 m/s motion → start Femto Bolt. Only after that, integrate RTAB-Map mapping/localization and Nav2.
 
-The public repository intentionally does **not** include the manufacturer-provided `yhs_can_control`, `yhs_can_interfaces`, vendor archives, CAN protocol spreadsheets, or unreleased CAD assets. Copy permitted vendor packages separately from the original FW-mini materials on Windows and set `FWM_VENDOR_ROS2_DIR` for the adapter test script.
+The original manufacturer ROS 2 driver and message source files are now included under [`vendor/FW-mini-ros2/`](vendor/FW-mini-ros2/), so cloning the repository provides `yhs_can_control` and `yhs_can_interfaces`. No binary vendor archives, ROS 1 packages, CAD or office documents were added in this update. The vendor materials were supplied separately; no license granting public redistribution was found in the imported ROS2 directory. **The repository is currently public; change it to Private immediately if redistribution is not permitted.** The original vendor files should remain unchanged; use a separate maintained copy for fixes.
 
 ## Core checks on Windows (no ROS)
 
