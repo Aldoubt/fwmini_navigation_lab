@@ -1,41 +1,44 @@
-# fwmini_navigation_lab
+# FW-mini Navigation Lab
 
-ROS 2 Humble / Ubuntu 22.04. First implementation: static model, typed contracts and independent description launch. Camera placement is pending ruler/SolidWorks measurement.
+ROS 2 Humble / Ubuntu 22.04 research platform for **FW-mini steerable chassis + Femto Bolt RGB-D + AprilTag**, with RTAB-Map + Nav2 as the next integration milestone.
 
-## Packages
+## Status (2026-10-15)
 
-| Package | Implemented responsibility |
+**Source recovered from Windows and migrated to GitHub.** The source-only migration commit is `60411aa` (Git tree `f916099cea0033ef5a9087cca869af21db5a69a8`, identical to the previous local Windows `318e2db` tree). Original local three-commit history remains on Windows.
+
+Eight ROS 2 packages are present:
+
+| Package | Function |
 |---|---|
-| fwmini_description | Box envelope and fixed housing/optical TF |
-| fwmini_interfaces | Chassis status, localization status, anchor service |
-| fwmini_bringup | Description launch and external geometry config validation |
+| `fwmini_description` | Preliminary box envelope, URDF/Xacro and static frames |
+| `fwmini_interfaces` | Project messages and services |
+| `fwmini_bringup` | Description and Tag-follow launch integration |
+| `fwmini_chassis_adapter` | Guarded Twist → YHS CtrlCmd adapter |
+| `fwmini_odom_adapter` | YHS feedback → planar Odometry + TF |
+| `fwmini_perception` | Femto Bolt official driver launch wrapper |
+| `apriltag_detector_adapter` | Tag observation adapter |
+| `tag_follow_controller` | Target-following control core |
 
-## Build and preview
+Windows static checks and C++ core tests passed, but **ROS 2 Humble node builds, CAN, hardware motion and RGB-D runtime are not yet verified**. RTAB-Map/ Nav2 launch/config are **not yet implemented** in this repository.
 
-```bash
-source /opt/ros/humble/setup.bash
-rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install
-source install/setup.bash
-ros2 launch fwmini_bringup description.launch.py
-```
+## Field deployment — start here
 
-Use RViz Fixed Frame `base_link`, add RobotModel and TF. This preview publishes only static body/camera transforms. No map or odom is fabricated.
+**[Ubuntu Humble deployment & first-drive checklist](docs/field_deployment_humble.md)**
 
-## Measurement workflow
+The first-day acceptance sequence is: compile → verify real YHS CAN feedback → wheel odometry → guarded 0.05 m/s motion → start Femto Bolt. Only after that, integrate RTAB-Map mapping/localization and Nav2.
 
-Copy `src/fwmini_bringup/config/geometry.preview.yaml` to your own geometry YAML. All distances use metres; roll/pitch/yaw use radians. Base axes: x forward, y left, z up. Choose and document the chassis motion reference before measuring. Body box starts at z=0 in this preliminary model; set the base origin consistently with the actual geometry.
+The public repository intentionally does **not** include the manufacturer-provided `yhs_can_control`, `yhs_can_interfaces`, vendor archives, CAN protocol spreadsheets, or unreleased CAD assets. Copy permitted vendor packages separately from the original FW-mini materials on Windows and set `FWM_VENDOR_ROS2_DIR` for the adapter test script.
 
-1. Measure body envelope in SW/ruler and record uncertainty.
-2. Measure housing pose relative to base_link; enter camera_mount xyz/rpy.
-3. Obtain color optical origin relative to housing from vendor model or measurement. Optical axes are x right, y down, z forward; the preview rotation assumes housing x forward/y left/z up.
-4. Set measured=true separately for each verified section. Store evidence and date with the config.
-5. Run `ros2 launch fwmini_bringup description.launch.py geometry_file:=/absolute/path/geometry.yaml preview:=false`.
+## Core checks on Windows (no ROS)
 
-The future Orbbec driver must have one TF owner per edge. Disable/omit overlapping driver TF or replace this optical joint with the verified vendor tree before integration. Depth optical extrinsics are not defined yet.
+    python tools/check_scaffold.py
+    python tools/test_adapter_cores.py --cxx D:/msys/ucrt64/bin/g++.exe
+    python tools/test_tag_follow_cores.py --cxx D:/msys/ucrt64/bin/g++.exe
 
-## Interface and next stages
+Core PASS is not evidence of ROS runtime, DDS/TF or real hardware acceptance.
 
-See docs/contracts.md. No CAN protocol, camera driver, AprilTag detector, continuous odometry, localization runtime or Nav2 has been implemented in this first batch. Complete these as independently launchable modules after static TF verification.
+## Architecture
 
-Windows can edit and run static checks. Ubuntu ROS build/TF verification and hardware acceptance are separate gates.
+The experimental path is **YHS CAN → chassis/odom adapters → RGB-D SLAM (RTAB-Map) → Nav2**, with AprilTag for initialization/relocalization and a separate depth-based local obstacle pipeline. This repository stays separate from AGT Navigation's MID360 + LIO + GNSS outdoor-agriculture integration stack.
+
+More details: [vendor review](docs/vendor_middleware_review.md), [adapter contract](docs/contracts.md), [adapter validation](docs/adapter_validation.md), [Tag pipeline](docs/tag_follow_pipeline.md).
