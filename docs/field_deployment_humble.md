@@ -7,7 +7,7 @@
 - 八个 ROS 2 包：fwmini_description、fwmini_interfaces、fwmini_bringup、fwmini_chassis_adapter、fwmini_odom_adapter、fwmini_perception、apriltag_detector_adapter、tag_follow_controller。
 - Windows 已执行静态结构测试和 C++ 适配器核心测试：PASS。
 - ROS2 Humble 构建、厂家 CAN 驱动、实车运动和相机实机：NOT_RUN。
-- 厂家 yhs_can_control 和 yhs_can_interfaces 不在公开仓库内；必须从 Windows 原始资料中合规复制。
+- 厂家 ROS 2 的 yhs_can_control 和 yhs_can_interfaces 源码已经随 GitHub 仓库一起提供于 `vendor/FW-mini-ros2`；厂商源代码未发现清晰的公开再分发许可，请立即将仓库设为 Private 或确认许可。
 
 ## 2. 克隆工程
 
@@ -17,7 +17,7 @@
     git clone https://github.com/Aldoubt/fwmini_navigation_lab.git project
     mkdir -p vendor/FW-mini-ros2
 
-从 Windows 原始目录复制这两个 ROS 2 包到 ~/fwmini_ws/vendor/FW-mini-ros2：
+从 Windows 原始目录复制这两个 ROS 2 包到 ~/fwmini_ws/project/vendor/FW-mini-ros2：
 
     Fw-mini导航中间件/01_ros通讯协议解析包/FW-mini-ros2/yhs_can_interfaces
     Fw-mini导航中间件/01_ros通讯协议解析包/FW-mini-ros2/yhs_can_control
@@ -30,7 +30,7 @@
     sudo apt install -y python3-colcon-common-extensions python3-rosdep       ros-humble-apriltag-msgs ros-humble-apriltag-ros ros-humble-image-proc       ros-humble-xacro ros-humble-robot-state-publisher ros-humble-tf2-tools       ros-humble-rtabmap-ros ros-humble-navigation2 ros-humble-nav2-bringup
 
     cd ~/fwmini_ws/project
-    rosdep install --from-paths src ~/fwmini_ws/vendor/FW-mini-ros2/yhs_can_interfaces       --ignore-src --rosdistro humble -r -y
+    rosdep install --from-paths src ~/fwmini_ws/project/vendor/FW-mini-ros2/yhs_can_interfaces       --ignore-src --rosdistro humble -r -y
     export FWM_VENDOR_ROS2_DIR="$HOME/fwmini_ws/vendor/FW-mini-ros2"
     bash tools/test_ros_adapters.sh
 
@@ -47,8 +47,8 @@
 检查真实 CAN 接口、比特率、底盘控制模式及厂家启动配置：
 
     ip -details link show
-    ls ~/fwmini_ws/vendor/FW-mini-ros2/yhs_can_control/launch
-    cat ~/fwmini_ws/vendor/FW-mini-ros2/yhs_can_control/params/cfg.yaml
+    ls ~/fwmini_ws/project/vendor/FW-mini-ros2/yhs_can_control/launch
+    cat ~/fwmini_ws/project/vendor/FW-mini-ros2/yhs_can_control/params/cfg.yaml
 
 厂家驱动成功启动后，检查：
 
