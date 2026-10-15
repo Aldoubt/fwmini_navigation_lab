@@ -4,11 +4,12 @@ set -euo pipefail
 task_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$task_root"
 source /opt/ros/humble/setup.bash
-# An external private/vendor source location may be supplied for field deployment.
-task_vendor="${FWM_VENDOR_ROS2_DIR:-$task_root/Fw-mini导航中间件/01_ros通讯协议解析包/FW-mini-ros2}"
+# Prefer the versioned vendor ROS 2 source bundled in this repository.
+# FWM_VENDOR_ROS2_DIR may override it for another tested vendor revision.
+task_vendor="${FWM_VENDOR_ROS2_DIR:-$task_root/vendor/FW-mini-ros2}"
 if [[ ! -f "$task_vendor/yhs_can_interfaces/package.xml" ]]; then
   echo "Missing YHS ROS2 interfaces at $task_vendor/yhs_can_interfaces" >&2
-  echo "Set FWM_VENDOR_ROS2_DIR to the extracted FW-mini-ros2 vendor directory." >&2
+  echo "Set FWM_VENDOR_ROS2_DIR to the FW-mini-ros2 directory or restore vendor/FW-mini-ros2." >&2
   exit 2
 fi
 # Original vendor sources remain untouched. Their own lint/test configuration
