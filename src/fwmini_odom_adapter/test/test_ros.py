@@ -81,9 +81,32 @@ class OdomTest(unittest.TestCase):
         self.assertTrue(all('map' not in edge for edge in edges))
         self.assertEqual(transforms[-1].header.stamp, output.header.stamp)
         self.assertAlmostEqual(transforms[-1].transform.translation.y, 0.02, places=6)
+        # Allow multiple 50-ms diagnostic periods plus DDS scheduling jitter.
+        # A 1-second unconditional deadline produced intermittent failures on
+        # loaded CI/field hosts even after the Odometry/TF assertions passed.
         diagnostics.clear()
-        self.wait(lambda: any(s.level == 2 and 'timeout' in s.message
-                             for d in diagnostics for s in d.status), timeout=1.0)
+        def observed_feedback_timeout():
+            return any(
+                s.name == 'fwmini_odom_adapter/feedback'
+                and s.level == 2
+                and 'timeout' in s.message
+                for d in diagnostics for s in d.status)
+
+        try:
+            self.wait(observed_feedback_timeout, timeout=3.0)
+        except AssertionError as exc:
+            # Preserve diagnostic evidence instead of reporting only
+            # "ROS condition timed out" without the actual status messages.
+            seen = [
+                (s.name, int(s.level), s.message,
+                 [(v.key, v.value) for v in s.values])
+                for d in diagnostics for s in d.status
+            ]
+            self.fail(
+                'Odom timeout diagnostic was not observed; '
+                f'published status count={len(diagnostics)}, '
+                f'last statuses={seen[-12:]!r}; original error={exc}'
+            )
         count = len(odoms)
         old = ChassisInfoFb()
         old.header.stamp.sec = max(1, int(self.node.get_clock().now().nanoseconds / 1e9) - 10)
