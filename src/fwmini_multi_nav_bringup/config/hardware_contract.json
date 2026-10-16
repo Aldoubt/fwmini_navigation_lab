@@ -1,10 +1,10 @@
-1: {
-2:   "odom_frame": "odom",
-3:   "base_frame": "base_link",
-4:   "wheel_odom_verified": false,
-5:   "camera_extrinsic_verified": false,
-6:   "lidar_extrinsic_verified": false,
-7:   "footprint_verified": false,
-8:   "cmd_vel_verified": false,
-9:   "note": "Set each to true ONLY after physical measurement and acceptance."
-10: }
+{
+  "odom_frame": "odom",
+  "base_frame": "base_link",
+  "wheel_odom_verified": false,
+  "camera_extrinsic_verified": false,
+  "lidar_extrinsic_verified": false,
+  "footprint_verified": false,
+  "cmd_vel_verified": false,
+  "note": "Set each to true ONLY after physical measurement and acceptance."
+}
