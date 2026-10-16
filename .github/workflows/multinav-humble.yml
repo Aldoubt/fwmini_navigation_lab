@@ -1,0 +1,54 @@
+1: name: FW-mini Multi-Nav Humble
+2: 
+3: on:
+4:   push:
+5:     branches: [feature/fwmini-multinav-humble-p0-20261016]
+6:     paths:
+7:       - 'src/fwmini_multi_nav_bringup/**'
+8:       - 'tools/test_multi_nav_contracts.py'
+9:       - '.github/workflows/multinav-humble.yml'
+10:   pull_request:
+11:     paths:
+12:       - 'src/fwmini_multi_nav_bringup/**'
+13:       - 'tools/test_multi_nav_contracts.py'
+14:       - '.github/workflows/multinav-humble.yml'
+15: 
+16: permissions:
+17:   contents: read
+18: 
+19: jobs:
+20:   offline-contracts:
+21:     runs-on: ubuntu-22.04
+22:     steps:
+23:       - uses: actions/checkout@v4
+24:       - name: Offline unit tests, no robot motion
+25:         run: |
+26:           python3 -m unittest discover -s tools -p test_multi_nav_contracts.py -v
+27:           python3 -m compileall -q src/fwmini_multi_nav_bringup
+28: 
+29:   humble-package:
+30:     runs-on: ubuntu-22.04
+31:     steps:
+32:       - uses: actions/checkout@v4
+33:       - name: Set up ROS 2 Humble
+34:         uses: ros-tooling/setup-ros@v0.7
+35:         with:
+36:           required-ros-distributions: humble
+37:       - name: Install backend binaries
+38:         run: |
+39:           sudo apt-get update
+40:           sudo apt-get install -y ros-humble-rtabmap-ros ros-humble-slam-toolbox \
+41:             ros-humble-cartographer-ros ros-humble-depthimage-to-laserscan \
+42:             ros-humble-pointcloud-to-laserscan ros-humble-nav2-bringup
+43:       - name: Colcon build + launch introspection (no processes started)
+44:         shell: bash
+45:         run: |
+46:           set -eo pipefail
+47:           source /opt/ros/humble/setup.bash
+48:           rosdep install --from-paths src/fwmini_multi_nav_bringup \
+49:             --ignore-src --rosdistro humble -r -y
+50:           colcon build --base-paths src/fwmini_multi_nav_bringup \
+51:             --packages-select fwmini_multi_nav_bringup
+52:           source install/setup.bash
+53:           ros2 pkg prefix fwmini_multi_nav_bringup
+54:           ros2 launch fwmini_multi_nav_bringup bringup.launch.py --show-args

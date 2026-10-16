@@ -1,0 +1,22 @@
+1: <?xml version="1.0"?>
+2: <package format="3">
+3:   <name>fwmini_multi_nav_bringup</name>
+4:   <version>0.1.0</version>
+5:   <description>FW-mini ROS 2 Humble multiple SLAM and Nav2 bringup overlay</description>
+6:   <maintainer email="maintainer@example.invalid">FW-mini integration</maintainer>
+7:   <license>Apache-2.0</license>
+8:   <buildtool_depend>ament_python</buildtool_depend>
+9:   <exec_depend>launch</exec_depend>
+10:   <exec_depend>launch_ros</exec_depend>
+11:   <exec_depend>ament_index_python</exec_depend>
+12:   <exec_depend>lifecycle_msgs</exec_depend>
+13:   <exec_depend>rclpy</exec_depend>
+14:   <exec_depend>tf2_ros</exec_depend>
+15:   <exec_depend>nav2_bringup</exec_depend>
+16:   <exec_depend>slam_toolbox</exec_depend>
+17:   <exec_depend>rtabmap_slam</exec_depend>
+18:   <exec_depend>cartographer_ros</exec_depend>
+19:   <exec_depend>depthimage_to_laserscan</exec_depend>
+20:   <exec_depend>pointcloud_to_laserscan</exec_depend>
+21:   <export><build_type>ament_python</build_type></export>
+22: </package>

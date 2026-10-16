@@ -1,0 +1,24 @@
+1: slam_toolbox:
+2:   ros__parameters:
+3:     solver_plugin: solver_plugins::CeresSolver
+4:     ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+5:     ceres_preconditioner: SCHUR_JACOBI
+6:     ceres_trust_strategy: LEVENBERG_MARQUARDT
+7:     ceres_dogleg_type: TRADITIONAL_DOGLEG
+8:     ceres_loss_function: None
+9:     odom_frame: odom
+10:     map_frame: map
+11:     base_frame: base_link
+12:     scan_topic: /scan
+13:     mode: mapping
+14:     transform_publish_period: 0.05
+15:     map_update_interval: 2.0
+16:     resolution: 0.05
+17:     min_laser_range: 0.25
+18:     max_laser_range: 8.0
+19:     minimum_travel_distance: 0.1
+20:     minimum_travel_heading: 0.1
+21:     transform_timeout: 0.3
+22:     tf_buffer_duration: 30.0
+23:     scan_buffer_size: 10
+24:     do_loop_closing: true
