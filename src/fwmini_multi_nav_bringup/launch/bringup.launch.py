@@ -110,7 +110,9 @@ def _spawn(context):
                 ("depth/image", _cfg(context, "depth_topic")),
                 ("rgb/camera_info", _cfg(context, "camera_info_topic")),
                 ("odom", _cfg(context, "odom_topic")),
-                ("grid_map", "/map"),
+                # RTAB-Map Humble actually publishes the relative topic 'map'
+                # under /rtabmap. 'grid_map' is NOT its OccupancyGrid name.
+                ("map", "/map"),
             ],
         ))
     elif backend == "slam_toolbox":

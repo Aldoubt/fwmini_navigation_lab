@@ -20,6 +20,13 @@ NOT change the existing chassis, odom, camera driver or vendor ROS sources.
 - Previous camera-only RTAB-Map handheld experiments used rgbd_odometry.
   These new mobile-base experiments use existing /wheel/odom instead;
   stop the visual odometry node before running this overlay.
+- RTAB-Map in Humble publishes the relative OccupancyGrid topic 'map' under
+  /rtabmap. The overlay remaps that output to /map for Nav2; the older
+  grid_map remap name was incorrect.
+- Depthimage-to-laserscan in the installed Humble environment publishes a
+  LaserScan in camera_depth_frame. Cartographer and SLAM Toolbox require an
+  actual TF from base_link to that scan frame. The existing preview Xacro
+  alone does not establish verified real depth camera extrinsics.
 
 ## Humble build, no motor control
 

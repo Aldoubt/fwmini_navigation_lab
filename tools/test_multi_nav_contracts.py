@@ -103,6 +103,7 @@ class SourceContractTests(unittest.TestCase):
         self.assertIn('("navigation", "false"', source)
         self.assertIn('("odom_topic", "/wheel/odom"', source)
         self.assertIn('("rgb_topic", "/fwmini/camera/color/image_raw"', source)
+        self.assertIn('("map", "/map")', source)
 
     def test_config_artifacts_exist(self):
         for path in (
