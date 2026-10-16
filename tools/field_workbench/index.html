@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FW-mini · 现场实验工作台</title>
+<style>
+:root {--paper:#f6f7fa;--ink:#182338;--muted:#637089;--line:#dbe0e9;--accent:#1864ab;--panel:white;--green:#007c58;--warn:#a75a03;--red:#b21f39}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.6 system-ui,-apple-system,"Noto Sans CJK SC","Microsoft YaHei",sans-serif}
+header{background:#152941;color:white;padding:20px max(18px,calc((100vw - 1190px)/2));border-bottom:4px solid #367fca}
+.head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}h1{margin:0;font-size:21px;letter-spacing:.1px}header p{margin:4px 0;color:#b8cce4}header .safety{font-size:12px;background:#2c4961;color:#e9f4ff;border:1px solid #4d708b;border-radius:12px;padding:6px 10px}
+main{max-width:1190px;margin:auto;padding:18px 18px 48px}h2{font-size:17px;margin:0 0 10px}h3{font-size:15px;margin:0}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center}button,select,.linkbtn{font:inherit;cursor:pointer;border:1px solid #a6b6c7;border-radius:8px;padding:7px 12px;background:white;color:var(--ink)}button:hover,.linkbtn:hover{background:#edf4fe}button.primary{background:var(--accent);border-color:var(--accent);color:white}button.primary:hover{background:#09518b}button:disabled{opacity:.5;cursor:not-allowed}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:17px;margin-bottom:14px;box-shadow:0 1px 3px #20334a09}
+.meta{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}.small{color:var(--muted);font-size:12px}.path{font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere;font-size:12px;color:#4b607b}
+.counts{display:flex;flex-wrap:wrap;gap:9px;margin:11px 0}.stat{padding:5px 11px;background:#f0f3f8;border-radius:6px;border:1px solid #e2e8ef}.stat b{font-size:16px}
+.track{height:10px;background:#e4eaf1;border-radius:20px;overflow:hidden}.track span{display:block;height:100%;background:var(--green);transition:width .2s}
+.notice{border-left:3px solid #c48b19;padding:8px 11px;background:#fcf8ed;color:#715012;border-radius:5px}
+.bag-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.bag-row label{color:var(--muted)}.bag-active{color:var(--green);font-weight:600}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0}.filters button{font-size:13px}.filters button.chosen{background:#dbeaff;border-color:#5b8ac0;color:#15497d;font-weight:700}
+.lane-title{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0 7px;margin:0}.lane-title h2{margin:0}.lane-title .small{margin-right:4px}
+.card{background:#fff;border:1px solid #dfe5eb;border-radius:11px;margin-bottom:10px;overflow:hidden}.card summary{list-style:none;padding:11px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px}.card summary::-webkit-details-marker{display:none}.title{font-weight:700;font-size:14px}.card summary .target{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:2px}.card[open]{border-color:#b7cade}.card-body{border-top:1px solid var(--line);padding:13px 14px 16px}.criterion{background:#f5f8fc;border-radius:7px;padding:8px 10px;margin-bottom:10px}
+.status{border-radius:6px;font-size:11px;font-weight:700;padding:3px 8px;white-space:nowrap;background:#e7eaf0;color:#506176}.status.PASS{background:#dbf5e9;color:#066842}.status.BLOCKED{background:#fff0d6;color:#925300}.status.FAIL{background:#ffe0e5;color:#9c1831}.status.SKIPPED{background:#e8e4f5;color:#554781}
+pre{white-space:pre-wrap;word-break:break-all;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;background:#1c2d40;color:#e3eefa;border-radius:8px;padding:10px;margin:8px 0;max-height:200px;overflow:auto}
+.actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:10px}select{padding:7px 8px}.fields{display:grid;grid-template-columns:2fr 1fr;gap:9px;margin:8px 0}.fields label{font-size:12px;color:var(--muted)}.fields input,.fields textarea{width:100%;font:inherit;padding:8px;border:1px solid #b6c2d0;border-radius:7px;min-height:37px}.fields textarea{resize:vertical;min-height:42px}.btnline{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.log{display:none;white-space:pre-wrap;max-height:280px;overflow:auto;background:#f1f4f8;color:#283e5d;padding:12px;border-radius:7px;font:12px/1.55 ui-monospace,monospace;margin:10px 0}.log.visible{display:block}
+#toast{position:fixed;right:14px;bottom:14px;padding:12px 18px;background:#152941;color:white;border-radius:10px;box-shadow:0 6px 25px #0004;max-width:min(440px,94vw);display:none;z-index:1000}
+footer{margin-top:28px;border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:12px}
+@media(max-width:650px){.fields{grid-template-columns:1fr}header{padding:15px 18px}.head h1{font-size:18px}main{padding:12px 10px}.panel{padding:12px}.card summary{padding:10px}button{padding:7px 9px}.toolbar{gap:6px}}
+</style></head><body>
+<header><div class="head"><div><h1>FW-mini · 现场实验工作台</h1><p>循序验收 / 故障可跳过 / 独立证据 / 每天一份记录</p></div><span class="safety">网页只读诊断 + 录包，不提供底盘运动控制</span></div></header>
+<main>
+<section class="panel"><div class="meta"><div><h2 id="session-title">读取现场会话…</h2><div id="session-meta" class="small"></div><div id="session-path" class="path"></div></div><div class="toolbar"><button id="new-session">＋ 新建上车记录</button><select id="history" aria-label="查看历史会话"><option>历史记录</option></select><button id="open-session">切换</button><a class="linkbtn" href="/api/report.md">导出 Markdown</a><a class="linkbtn" href="/api/report.csv">导出 CSV</a><button id="reload">刷新</button></div></div><div id="progress" class="counts"></div><div class="track"><span id="bar" style="width:0"></span></div></section>
+<section class="panel"><h2>录包与现场证据</h2><div class="bag-row"><label for="bag-profile">采集内容</label><select id="bag-profile"><option value="core">底盘 / TF / 命令</option><option value="rgbd">RGB-D / TF / 里程计（占空间）</option><option value="slam">SLAM /scan /map /odom</option></select><button class="primary" id="bag-start">▶ 开始被动录包</button><button id="bag-stop" disabled>■ 停止并保存</button><button id="disk">检查磁盘</button><span id="bag-status" class="small">未录制</span></div><div class="small">自动选择当前已出现的预设话题；记录写到每个会话独立的 bags 目录。请先确认磁盘空间。录包不会发送速度指令。</div><pre id="bag-output" style="display:none"></pre></section>
+<div class="notice"><b>不会卡在一个阶段：</b>设备不在场就选 BLOCKED，当前不测就选 SKIPPED。CAN、相机、SLAM、Nav2 是独立方向；不要为了“全绿”把未经实测的项目标 PASS。任何软件检查都不会自动标记人工验收通过。</div>
+<div id="filters" class="filters" aria-label="筛选实验阶段"></div><section id="tasks" aria-live="polite"></section>
+<footer>所有修改按事件追加在 <code>events.jsonl</code>，当前状态存于 <code>session.json</code>，只读探测结果存为 <code>probe_*.txt</code>。即使刷新网页也不会丢失。完成真实上车后再根据证据更新硬件门禁，网页的 PASS 不会自动修改 Nav2 安全参数。</footer>
+</main><div id="toast" role="status"></div>
+<script>
+const TOKEN='__CSRF_TOKEN__';
+const LABEL={NOT_RUN:'未测',PASS:'通过',FAIL:'失败',BLOCKED:'阻断',SKIPPED:'跳过'};
+let data=null, filter='全部';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){const n=$('toast');n.textContent=msg;n.style.display='block';clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>n.style.display='none',5500)}
+async function api(path,body){const resp=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Workbench-Token':TOKEN},body:JSON.stringify(body)});let parsed=await resp.json();if(!resp.ok||parsed.ok===false)throw Error(parsed.error||'服务器错误');return parsed.result}
+async function refresh(){const resp=await fetch('/api/state');if(!resp.ok)throw Error('无法连接服务器');data=await resp.json();render()}
+async function act(fn){try{await fn()}catch(e){toast('操作未完成：'+e.message)}}
+function render(){const s=data.session, tasks=data.tasks, statuses=s.steps;
+ $('session-title').textContent=s.title; $('session-meta').textContent=`场地：${s.place}　·　开始：${s.started}　·　会话：${s.id}`;
+ $('session-path').textContent='本次记录：'+data.directory;
+ $('history').innerHTML=data.sessions.map(item=>`<option value="${esc(item.id)}" ${item.id===s.id?'selected':''}>${esc(item.title)} · ${esc(item.id)} (${item.passed} PASS)</option>`).join('');
+ const count={NOT_RUN:0,PASS:0,FAIL:0,BLOCKED:0,SKIPPED:0};tasks.forEach(t=>count[(statuses[t.id]&&statuses[t.id].status)||'NOT_RUN']++);
+ $('progress').innerHTML=Object.keys(count).map(k=>`<div class="stat"><b>${count[k]}</b> ${LABEL[k]}</div>`).join('');
+ $('bar').style.width=(100*count.PASS/tasks.length)+'%';
+ $('bag-status').textContent=(data.recording&&data.recording.active)?`● 录制中：${data.recording.profile} · PID ${data.recording.pid}`:'未录制';
+ $('bag-status').className=(data.recording&&data.recording.active)?'bag-active':'small';$('bag-start').disabled=!!(data.recording&&data.recording.active);$('bag-stop').disabled=!(data.recording&&data.recording.active);
+ const filters=['全部',...data.lanes];$('filters').innerHTML=filters.map(x=>`<button class="${filter===x?'chosen':''}" data-lane="${esc(x)}">${esc(x)}</button>`).join('');
+ $('filters').querySelectorAll('button').forEach(b=>b.onclick=()=>{filter=b.dataset.lane;render()});
+ const root=$('tasks');root.replaceChildren();const lanes=filter==='全部'?data.lanes:[filter];
+ for(const lane of lanes){const group=tasks.filter(t=>t.lane===lane);if(!group.length)continue;
+ const sect=document.createElement('section');const header=document.createElement('div');header.className='lane-title';const passed=group.filter(t=>(statuses[t.id]&&statuses[t.id].status)==='PASS').length;
+ header.innerHTML=`<h2>${esc(lane)}</h2><span class="small">${passed}/${group.length} 通过 · 可以独立测试</span>`;sect.append(header);
+ for(const task of group){const entry=statuses[task.id]||{};const status=entry.status||'NOT_RUN';
+ const card=document.createElement('details');card.className='card';card.dataset.task=task.id;
+ card.innerHTML=`<summary><div><span class="title">${esc(task.title)}</span><span class="target">${esc(task.target)}</span></div><span class="status ${status}">${LABEL[status]}</span></summary>
+ <div class="card-body"><div class="criterion"><b>通过条件：</b>${esc(task.criteria)}</div><div class="actions">${task.probe?'<button class="probe">🔎 只读检查</button>':''}<button class="copy">复制命令</button><span class="small">最后记录：${esc(entry.time||'未开始')}</span></div><pre>${esc(task.command)}</pre><div class="log"></div>
+ <div class="fields"><label>过程、故障和观察（可以写原因）<textarea class="note" placeholder="例如：相机尚未接入，跳过 CAN，先测试 RTAB-Map 离线数据">${esc(entry.note||'')}</textarea></label><label>证据文件路径（可选）<input class="evidence" placeholder="bag / 截图 / log" value="${esc(entry.evidence||'')}"></label></div>
+ <div class="btnline"><label>结果 <select class="status-select">${Object.keys(LABEL).map(k=>`<option value="${k}" ${k===status?'selected':''}>${LABEL[k]} / ${k}</option>`).join('')}</select></label><button class="primary save">保存本步记录</button></div></div>`;
+ card.querySelector('.copy').onclick=()=>act(async()=>{await navigator.clipboard.writeText(task.command);toast('已复制命令')});
+ const p=card.querySelector('.probe');if(p)p.onclick=()=>act(async()=>{p.disabled=true;p.textContent='正在检查…';try{const result=await api('/api/probe',{probe:task.probe});const log=card.querySelector('.log');log.textContent=result.output+'\n\n已保存：'+result.file;log.classList.add('visible');toast('只读诊断已记录（不会自动标记 PASS）');}finally{p.disabled=false;p.textContent='🔎 只读检查'}});
+ card.querySelector('.save').onclick=()=>act(async()=>{await api('/api/status',{step:task.id,status:card.querySelector('.status-select').value,note:card.querySelector('.note').value,evidence:card.querySelector('.evidence').value});toast('记录已保存');const scrollY=window.scrollY;const isOpen=card.open;await refresh();const replacement=document.querySelector(`[data-task="${task.id}"]`);if(replacement)replacement.open=isOpen;window.scrollTo(0,scrollY)});
+ sect.append(card)}root.append(sect)}
+}
+$('new-session').onclick=()=>act(async()=>{const title=prompt('本次上车实验名称','FW-mini · 一轮 CAN + 视觉检查');if(title===null)return;const place=(prompt('场地/环境（可留空）','实验室')||'');if(!confirm('新建独立实验会话？旧记录会保留。'))return;await api('/api/new',{title,place});filter='全部';await refresh();toast('已创建新的独立记录')});
+$('open-session').onclick=()=>act(async()=>{if(!confirm('切换到这次历史记录？当前记录会自动保留。'))return;await api('/api/open',{id:$('history').value});filter='全部';await refresh();toast('已切换记录')});
+$('reload').onclick=()=>act(refresh);
+$('disk').onclick=()=>act(async()=>{const result=await api('/api/probe',{probe:'storage'});$('bag-output').style.display='block';$('bag-output').textContent=result.output;toast('磁盘信息已保存：'+result.file)});
+$('bag-start').onclick=()=>act(async()=>{const profile=$('bag-profile').value;if(!confirm('确认开始被动 ROS bag 录制？不会控制底盘，RGB-D 可能占用大量磁盘。'))return;const result=await api('/api/bag/start',{profile});$('bag-output').style.display='block';$('bag-output').textContent='录制目录：'+result.path+'\n订阅话题：\n'+result.topics.join('\n');await refresh();toast('已启动录制，结束时务必点击“停止并保存”')});
+$('bag-stop').onclick=()=>act(async()=>{const result=await api('/api/bag/stop',{});$('bag-output').style.display='block';$('bag-output').textContent='已结束：'+result.path+'\n进程退出码：'+result.returncode;await refresh();toast('录包已停止，索引和日志已保存')});
+refresh().catch(e=>toast('工作台无法加载：'+e.message));setInterval(async()=>{try{if((data&&data.recording&&data.recording.active))await refresh()}catch(e){}},12000);
+</script></body></html>

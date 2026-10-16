@@ -3,3 +3,6 @@ install/
 log/
 __pycache__/
 *.pyc
+
+# Per-session ROS bag/log records, never commit automatically
+/evidence/field_workbench/
