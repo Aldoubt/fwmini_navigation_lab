@@ -76,6 +76,8 @@ class NavGateTests(unittest.TestCase):
             for key in (
                 "wheel_odom_verified", "footprint_verified",
                 "cmd_vel_verified", "camera_extrinsic_verified",
+                "can_protocol_verified", "odom_omni_verified",
+                "command_watchdog_verified", "tf_ownership_verified",
             ):
                 data[key] = True
             contract.write_text(json.dumps(data))

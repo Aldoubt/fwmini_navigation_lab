@@ -9,7 +9,7 @@ struct Pose { double x{0}, y{0}, yaw{0}; };
 inline bool finite(Velocity v) {
   return std::isfinite(v.x) && std::isfinite(v.y) && std::isfinite(v.z);
 }
-// All feedback unit conversion and the reviewed vendor decoder correction live here.
+// Legacy reviewed_yhs_ros2 profile compensates OLD decoder only; default uses corrected SI m/s.
 class Units {
  public:
   explicit Units(const std::string &profile) {

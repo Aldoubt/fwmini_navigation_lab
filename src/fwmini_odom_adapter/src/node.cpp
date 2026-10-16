@@ -25,7 +25,7 @@ class Adapter : public rclcpp::Node {
         !std::isfinite(max_dt_) || max_dt_ <= 0 || max_dt_ > timeout_ ||
         !std::isfinite(future_tolerance_) || future_tolerance_ < 0)
       throw std::invalid_argument("invalid feedback timing limits (max_dt <= feedback_timeout)");
-    profile_ = declare_parameter<std::string>("feedback_profile", "reviewed_yhs_ros2");
+    profile_ = declare_parameter<std::string>("feedback_profile", "mps_degps");
     units_ = std::make_unique<Units>(profile_);
     integrator_ = std::make_unique<Integrator>(max_dt_);
     publish_tf_ = declare_parameter("publish_tf", true);

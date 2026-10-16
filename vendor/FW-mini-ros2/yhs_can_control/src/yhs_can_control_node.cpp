@@ -240,7 +240,7 @@ whether the can line is connected correctly, and whether the chassis is powered 
 
           msg.ctrl_fb_z_angular = static_cast<float>(static_cast<short>((recv_frame.data[4] & 0x0f) << 12 | recv_frame.data[3] << 4 | (recv_frame.data[2] & 0xf0) >> 4)) / 100;
 
-          msg.ctrl_fb_y_linear = static_cast<float>(static_cast<short>((recv_frame.data[6] & 0x0f) << 12 | recv_frame.data[5] << 4 | (recv_frame.data[4] & 0xf0) >> 4)) / 100;
+          msg.ctrl_fb_y_linear = static_cast<float>(static_cast<short>((recv_frame.data[6] & 0x0f) << 12 | recv_frame.data[5] << 4 | (recv_frame.data[4] & 0xf0) >> 4)) / 1000;
 
           unsigned char crc = recv_frame.data[0] ^ recv_frame.data[1] ^ recv_frame.data[2] ^ recv_frame.data[3] ^ recv_frame.data[4] ^ recv_frame.data[5] ^ recv_frame.data[6];
 
@@ -249,7 +249,8 @@ whether the can line is connected correctly, and whether the chassis is powered 
             chassis_info_msg.header.stamp = node_->get_clock()->now();
             chassis_info_msg.ctrl_fb = msg;
             chassis_info_fb_publisher_->publish(chassis_info_msg);
-            publish_odom(msg.ctrl_fb_x_linear, msg.ctrl_fb_z_angular / 180 * 3.14);
+            publish_odom(msg.ctrl_fb_x_linear, msg.ctrl_fb_y_linear,
+                         msg.ctrl_fb_z_angular * 0.017453292519943295);
           }
 
           break;
@@ -512,7 +513,7 @@ whether the can line is connected correctly, and whether the chassis is powered 
     }
   }
 
-  void CanControl::publish_odom(const double linear_vel, const double angular_vel)
+  void CanControl::publish_odom(const double linear_x, const double linear_y, const double angular_vel)
   {
 
     static double x_ = 0.0;
@@ -524,8 +525,11 @@ whether the can line is connected correctly, and whether the chassis is powered 
 
     double dt = (current_time - last_time_).seconds();
 
-    x_ += linear_vel * cos(theta_) * dt;
-    y_ += linear_vel * sin(theta_) * dt;
+    // CAN: x/y body velocity [m/s], yaw rate [rad/s]. Integrate both axes.
+    if (dt < 0.0 || dt > 0.5) dt = 0.0;
+    const double theta_mid = theta_ + angular_vel * dt * 0.5;
+    x_ += (linear_x * cos(theta_mid) - linear_y * sin(theta_mid)) * dt;
+    y_ += (linear_x * sin(theta_mid) + linear_y * cos(theta_mid)) * dt;
     theta_ += angular_vel * dt;
 
     nav_msgs::msg::Odometry odom_msg;
@@ -546,8 +550,8 @@ whether the can line is connected correctly, and whether the chassis is powered 
     odom_msg.pose = pose_cov;
 
     geometry_msgs::msg::TwistWithCovariance twist_cov;
-    twist_cov.twist.linear.x = linear_vel;
-    twist_cov.twist.linear.y = 0.0;
+    twist_cov.twist.linear.x = linear_x;
+    twist_cov.twist.linear.y = linear_y;
     twist_cov.twist.linear.z = 0.0;
     twist_cov.twist.angular.x = 0.0;
     twist_cov.twist.angular.y = 0.0;

@@ -6,5 +6,9 @@
   "lidar_extrinsic_verified": false,
   "footprint_verified": false,
   "cmd_vel_verified": false,
-  "note": "Set each to true ONLY after physical measurement and acceptance."
+  "note": "Set each to true ONLY after physical measurement and acceptance.",
+  "can_protocol_verified": false,
+  "odom_omni_verified": false,
+  "command_watchdog_verified": false,
+  "tf_ownership_verified": false
 }

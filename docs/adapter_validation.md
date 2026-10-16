@@ -30,3 +30,6 @@ Choose mps_degps for a corrected decoder or SI-valued fake feedback.
 On Ubuntu 22.04 / Humble install dependencies, then run bash tools/test_ros_adapters.sh.
 The script builds original vendor interfaces in a separate overlay and runs both adapter tests.
 It never launches yhs_can_control or opens a CAN device.
+
+**2026-10-16 corrected vendor driver:** choose `mps_degps` for `/chassis_info_fb`.
+The `reviewed_yhs_ros2` profile remains available for the **old unmodified** vendor decoder ONLY. Never multiply lateral feedback by 0.1 after vendor decoding is fixed.

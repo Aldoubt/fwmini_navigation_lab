@@ -49,7 +49,9 @@ def validate_hardware_contract(path, backend, source):
         data = json.loads(file_path.read_text(encoding="utf8"))
     except (OSError, ValueError) as exc:
         raise ContractError("Invalid hardware verification JSON: " + str(exc)) from exc
-    required = ["wheel_odom_verified", "footprint_verified", "cmd_vel_verified"]
+    required = ["wheel_odom_verified", "footprint_verified", "cmd_vel_verified",
+                "can_protocol_verified", "odom_omni_verified",
+                "command_watchdog_verified", "tf_ownership_verified"]
     if backend == "rtabmap" or source == "depth":
         required.append("camera_extrinsic_verified")
     else:

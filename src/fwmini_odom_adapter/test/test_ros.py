@@ -36,7 +36,7 @@ def generate_test_description():
         package='fwmini_odom_adapter', executable='fwmini_odom_adapter_node',
         parameters=[{'feedback_topic': '/test_odom/input',
                      'odom_topic': '/test_odom/output',
-                     'feedback_profile': 'reviewed_yhs_ros2',
+                     'feedback_profile': 'mps_degps',
                      'feedback_timeout': 0.2, 'max_dt': 0.2}])
     return launch.LaunchDescription([adapter, launch_testing.actions.ReadyToTest()])
 
@@ -78,7 +78,7 @@ class OdomTest(unittest.TestCase):
             msg.header.stamp.nanosec = ns % 1000000000
             msg.header.frame_id = 'vendor_frame_must_not_escape'
             msg.ctrl_fb.ctrl_fb_x_linear = 1.0
-            msg.ctrl_fb.ctrl_fb_y_linear = 10.0  # Known YHS decoder factor -> 1 m/s
+            msg.ctrl_fb.ctrl_fb_y_linear = 1.0  # Corrected YHS feedback is directly m/s
             msg.ctrl_fb.ctrl_fb_z_angular = 90.0
             pub.publish(msg)
             self.wait(lambda: len(odoms) >= index + 1)

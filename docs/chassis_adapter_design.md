@@ -50,8 +50,8 @@ odom_topic can be set to /fwmini/chassis/odom when that existing project endpoin
 |---|---:|---:|---:|
 | Command mps + degps (default) | 1 | 1 | 180/pi |
 | Command mmps + radps (alternative API only) | 1000 | 1000 | 1 |
-| Feedback reviewed_yhs_ros2 (default) | 1 | 0.1 | pi/180 |
-| Feedback mps_degps | 1 | 1 | pi/180 |
+| Feedback reviewed_yhs_ros2 (legacy unmodified decoder) | 1 | 0.1 | pi/180 |
+| Feedback mps_degps (corrected default) | 1 | 1 | pi/180 |
 | Feedback mmps_degps | 0.001 | 0.001 | pi/180 |
 | Feedback si | 1 | 1 | 1 |
 
@@ -86,7 +86,7 @@ No I/O unlock, steering-control mode or free-wheel commands are emitted.
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| feedback_profile | reviewed_yhs_ros2 | Explicit unit/decoder profile |
+| feedback_profile | mps_degps | Explicit unit/decoder profile |
 | feedback_timeout | 0.2 | Steady reception age and maximum ROS-stamp age in seconds |
 | max_dt | 0.2 | Maximum continuous integration interval; must not exceed timeout |
 | future_tolerance | 0.05 | Maximum source stamp lead in seconds |
@@ -153,3 +153,6 @@ ros2 topic pub -r 20 /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.1, y: 0.05
 
 With no CAN driver, this only tests the ROS command interface. Ctrl-C the fake publisher to observe zeros after timeout.
 For fake feedback, use the ROS integration test which generates current header stamps; a CLI message with a zero header is intentionally rejected.
+
+**2026-10-16 corrected vendor driver:** choose `mps_degps` for `/chassis_info_fb`.
+The `reviewed_yhs_ros2` profile remains available for the **old unmodified** vendor decoder ONLY. Never multiply lateral feedback by 0.1 after vendor decoding is fixed.

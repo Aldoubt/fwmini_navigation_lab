@@ -2,7 +2,7 @@ fwmini_odom_adapter:
   ros__parameters:
     feedback_topic: /chassis_info_fb
     odom_topic: /wheel/odom
-    feedback_profile: reviewed_yhs_ros2
+    feedback_profile: mps_degps # corrected vendor decoder: x/y in m/s, yaw in deg/s
     feedback_timeout: 0.2
     max_dt: 0.2
     future_tolerance: 0.05

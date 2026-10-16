@@ -68,7 +68,7 @@ namespace yhs
 
     void can_data_recv_callback();
 
-    void publish_odom(const double linear_vel, const double angular_vel);
+    void publish_odom(const double linear_x, const double linear_y, const double angular_vel);
   };
 
 }
