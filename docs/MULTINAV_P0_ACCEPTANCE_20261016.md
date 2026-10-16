@@ -25,7 +25,10 @@ odometry in ROS_DOMAIN_ID=91, ROS_LOCALHOST_ONLY=1. The synthetic generator
 | Cartographer 2D Depth->scan->map | PASS (synthetic) | /scan frame resolved, /map one publisher, width=54 |
 | Nav2 before calibration | PASS (refusal) | Navigation BLOCKED until real contract is verified |
 | FAST-LIO2 unsupported adapter | PASS (refusal) | Fail-closed before launch |
-| Real Femto Bolt/odometry/CAN | NOT TESTED | Production device drivers not running during these tests |
+| Real Femto Bolt RGB-D driver | PASS (camera-only) | Device detected at USB3.1 speed; live color and registered depth image headers received |
+| Real Femto depth -> LaserScan | PASS (camera-only) | /scan published actual LaserScan messages in camera_depth_frame |
+| YHS control package | PASS (compile only) | Vendor yhs_can_control_node built separately without vendor source edits |
+| Real chassis feedback and CAN communication | NOT TESTED | No motor commands issued; driver not started on CAN |
 | Physical TF, footprints, Nav2 motion | BLOCKED | Awaiting measured extrinsics and supervised field acceptance |
 
 **A synthetic OccupancyGrid is evidence of software interconnection, not an
@@ -50,6 +53,41 @@ are invented; the 42/54/62 cell widths must not be compared for accuracy.
 The built-in `timeout --signal=INT` test harness can report process exit -2
 when the entire process group receives SIGINT. It is not evidence of
 spontaneous SLAM crashes; check logs before the intentional timeout.
+
+## Additional physical camera tests (still without chassis motion)
+
+The real Orbbec Femto Bolt (USB ID `2bc5:066b`) was present on the remote
+Ubuntu 22.04 workstation. The official `orbbec_camera` driver was already
+installed. A temporary launch of `fwmini_perception/femto_bolt.launch.py`
+with `depth_registration:=true` and `publish_tf:=false` succeeded:
+
+- The device reported USB3.1 connectivity on a 5000M USB bus.
+- Color stream configured at 1280x720, 30 FPS, MJPG.
+- Registered depth stream configured at 1280x720, 30 FPS, Y16.
+- Infrared stream configured at 640x576, 30 FPS, Y16.
+- Live `/fwmini/camera/color/image_raw` and
+  `/fwmini/camera/depth/image_raw` headers were received.
+- Both real image headers used `camera_color_optical_frame`.
+- `/fwmini/camera/depth/camera_info` was advertised. Running the overlay's
+  SLAM Toolbox profile produced live `/scan` with
+  `frame_id=camera_depth_frame`. No robot-motion estimate was supplied.
+
+**30 FPS is the device stream setting, not a measured end-to-end ROS image
+throughput result.** CameraInfo calibration validity, ROS image frame rate,
+relative timestamps, depth alignment accuracy and base_link-to-camera TF
+still require dedicated physical acceptance. No attempt was made to use
+unmeasured camera extrinsics to build a real-world navigation map.
+
+The vendor's `yhs_can_control` was missing from the currently sourced
+original `install/vendor` overlay, but its source exists under
+`~/fwmini_ws/project/vendor/FW-mini-ros2/yhs_can_control`. Its standalone
+ROS 2 Humble build completed without modifying that vendor source:
+
+`~/fwmini_ws/worktrees/multinav-humble-p0/install/vendor_can_check`.
+
+This proves build compatibility only. Real CAN bus communication, current
+controller operating mode, wheel feedback and emergency-stop behavior
+are not verified and must be tested under supervision later.
 
 ## Reproduction without hardware, on the Humble machine
 
@@ -87,6 +125,8 @@ For the next stage, the user will supply calibrated
 (when present), body footprint and verified omni-motion limits.
 Until then, `navigation:=true` remains blocked by the JSON contract.
 
-The GitHub Actions run initially failed with **zero jobs**, so GitHub CI does
-not count as a valid Humble build result. Direct SSH onto Ubuntu 22.04 is the
-source of all runtime evidence above.
+GitHub Actions initially failed without starting jobs. Subsequent runs
+completed the offline Python job successfully, but the hosted Humble
+dependency installation encountered an apt resolver issue. Direct SSH onto
+the actual Ubuntu 22.04 host, not GitHub CI, is the source of the reported
+successful Colcon builds and ROS runtime evidence above.
