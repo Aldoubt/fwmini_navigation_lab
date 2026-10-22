@@ -1,0 +1,34 @@
+# Actual ROS 2 parameters for the FW-mini last software velocity guard.
+# Does not enable motion. All values are candidate trial parameters; verify
+# braking and sensor quality before 1.0m/s physical speed experiments.
+fwmini_navigation_guard:
+  ros__parameters:
+    input_topic: /cmd_vel
+    output_topic: /agt/base/cmd_vel
+    status_topic: /fwmini/navigation_guard/status
+    localization_topic: /agt/localization/status
+    odom_status_topic: /agt/odometry/adapter_status
+    # The launch supplies validated map ID and version from immutable assets.
+    max_linear_x: 0.15
+    max_linear_y: 0.0
+    max_angular_z: 0.30
+    max_linear_accel: 0.20
+    max_angular_accel: 0.30
+    command_timeout: 0.20
+    status_timeout: 1.0
+    publish_rate: 50.0
+    allow_local_search: false
+    manual_search_topic: /fwmini/search_cmd_vel
+    search_max_linear_x: 0.10
+    search_max_linear_y: 0.0
+    search_max_angular_z: 0.20
+    require_fresh_obstacle_scan: true
+    obstacle_scan_topic: /scan
+    obstacle_scan_frame: base_footprint
+    obstacle_scan_timeout_s: 0.40
+    reaction_time_s: 0.30
+    brake_decel_mps2: 0.50
+    clearance_m: 0.30
+    side_margin_m: 0.18
+    scan_min_hits: 2
+    rotation_clearance_m: 0.55
