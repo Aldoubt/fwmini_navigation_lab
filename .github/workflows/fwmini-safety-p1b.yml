@@ -40,5 +40,12 @@ jobs:
           assert controller(rpp)['plugin'].endswith('RegulatedPurePursuitController')
           assert rpp['velocity_smoother']['ros__parameters']['max_velocity'][0] <= 0.15
           assert controller(rpp)['desired_linear_vel'] <= 0.15
-          print('RPP candidate is bounded and DWB baseline is unchanged')
+          guard = yaml.safe_load((root/'fwmini_obstacle_guard.yaml').read_text())['fwmini_navigation_guard']['ros__parameters']
+          assert guard['require_fresh_obstacle_scan'] is True
+          assert guard['allow_local_search'] is False
+          assert guard['input_topic'] == '/cmd_vel'
+          assert guard['output_topic'] == '/agt/base/cmd_vel'
+          assert guard['max_linear_x'] <= 0.15
+          assert guard['obstacle_scan_topic'] == '/scan'
+          print('RPP/DWB and single-source field guard YAML contracts checked')
           PY

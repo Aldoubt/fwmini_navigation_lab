@@ -67,3 +67,14 @@ Do not apply the RPP file without a complete Nav2 parameter check.
    no other publisher directly uses /agt/base/cmd_vel or /ctrl_cmd.
 5. Prove legacy YHS three-field CtrlCmd isn't in the runtime.
 6. Verify effective field launch params; do not increase default motion limits.
+
+## Single-source real ROS configuration
+
+The actual ROS node parameters are in
+`src/fwmini_multi_nav_bringup/config/nav2/fwmini_obstacle_guard.yaml`.
+The launch loads this file first, then overrides only selected map identity
+and the two explicit operational toggles. These values are still candidate
+trial values; never raise physical speed based only on YAML edits.
+
+The default DWB and RPP candidate parameter sets are separate Nav2 files.
+The verified Nav2 runtime source should be selected by `nav2_params_file`.

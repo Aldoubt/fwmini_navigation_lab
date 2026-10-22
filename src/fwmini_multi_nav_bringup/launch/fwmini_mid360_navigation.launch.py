@@ -300,29 +300,17 @@ def generate_launch_description():
         Node(
             package='fwmini_multi_nav_bringup', executable='fwmini_navigation_guard',
             name='fwmini_navigation_guard', output='screen',
-            parameters=[{
+            # Operator-tunable single-source guard YAML; identity and explicit
+            # operational toggles remain launch-owned.
+            parameters=[str(fwmini_share / 'config/nav2/fwmini_obstacle_guard.yaml'), {
                 'map_id': LaunchConfiguration('map_id'),
                 'map_version': ParameterValue(LaunchConfiguration('map_version'), value_type=str),
-                'max_linear_x': 0.15, 'max_linear_y': 0.15,
-                'max_angular_z': 0.30,
-                'max_linear_accel': 0.20, 'max_angular_accel': 0.30,
-                'command_timeout': 0.20, 'status_timeout': 1.0,
-                'publish_rate': 50.0,
-                'allow_local_search': ParameterValue(LaunchConfiguration('allow_local_search'), value_type=bool),
-                'manual_search_topic': '/fwmini/search_cmd_vel',
-                'search_max_linear_x': 0.10,
-                'search_max_linear_y': 0.0,
-                'search_max_angular_z': 0.20,
+                'allow_local_search': ParameterValue(
+                    LaunchConfiguration('allow_local_search'), value_type=bool),
                 'require_fresh_obstacle_scan': ParameterValue(
                     LaunchConfiguration('require_fresh_obstacle_scan'), value_type=bool),
-                'obstacle_scan_topic': '/scan',
-                'obstacle_scan_frame': 'base_footprint',
-                'obstacle_scan_timeout_s': 0.40,
-                'reaction_time_s': 0.30,
-                'brake_decel_mps2': 0.50,
-                'clearance_m': 0.30,
-                'side_margin_m': 0.18,
-                'scan_min_hits': 2,
+                'use_sim_time': ParameterValue(
+                    LaunchConfiguration('use_sim_time'), value_type=bool),
             }],
         ),
         # Final actuator boundary. It clamps x/y/yaw, has a 0.2 s watchdog and
