@@ -1,5 +1,11 @@
 schema_version: 1
-status: SPIN_FIT_CANDIDATE_NOT_FIELD_VERIFIED
+status: FIELD_TRIAL_USABLE
+calibration_status: SPIN_FIT_CANDIDATE
+usable_for:
+  - static_tf
+  - fastlio2_supervised_field_trial
+  - low_speed_route_tracking_validation
+precision_validation: PENDING
 parent_frame: base_link
 child_frame: livox_frame
 translation_m: [0.146725, 0.002608, 0.37704]
@@ -12,6 +18,8 @@ assumptions:
   - existing FAST-LIO2 t_il is valid for this MID360/IMU assembly
   - steering rotation center equals base_link origin in XY
 review_note: >-
-  The fitted x offset is about 147 mm and conflicts with the earlier description
-  that the LiDAR sits at chassis center. Verify the steering-center to base_link
-  offset before treating this transform as calibrated.
+  This transform is accepted as the current usable field-trial profile so the
+  integrated system can run supervised low-speed tests. It is not yet an
+  independent precision-calibration result. The fitted x offset is about 147 mm
+  and differs from the earlier chassis-center description; record straight-line
+  and in-place-spin residuals during the next physical validation.
