@@ -1,7 +1,7 @@
 # FW-mini MID360 Nav2 candidate
 
 `fwmini_mid360_nav2.yaml` is the Humble Nav2 baseline used by
-`fwmini_mid360_navigation.launch.py`. It enables holonomic DWB x/y sampling,
+`fwmini_mid360_navigation.launch.py`. It uses 4T4D-mode nonholonomic DWB (vy=0),
 uses the 495 x 360 mm vendor footprint, consumes the projected MID360 scan,
 and limits the trial controller to 0.15 m/s in x/y and 0.30 rad/s in yaw.
 

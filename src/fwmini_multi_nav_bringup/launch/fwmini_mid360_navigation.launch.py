@@ -212,7 +212,9 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='true'),
         DeclareLaunchArgument('start_chassis_adapter', default_value='false'),
         DeclareLaunchArgument('initial_motion_enabled', default_value='false'),
-        DeclareLaunchArgument('allow_local_search', default_value='true'),
+        # Safety search must be explicitly enabled only after a field preflight.
+        DeclareLaunchArgument('allow_local_search', default_value='false'),
+        DeclareLaunchArgument('require_fresh_obstacle_scan', default_value='true'),
         DeclareLaunchArgument('start_rviz', default_value='true'),
         DeclareLaunchArgument('base_footprint_to_base_z', default_value=str(geometry['base_footprint_to_base_z'])),
         DeclareLaunchArgument('lidar_x', default_value=str(lidar_xyz[0])),
@@ -311,6 +313,16 @@ def generate_launch_description():
                 'search_max_linear_x': 0.10,
                 'search_max_linear_y': 0.0,
                 'search_max_angular_z': 0.20,
+                'require_fresh_obstacle_scan': ParameterValue(
+                    LaunchConfiguration('require_fresh_obstacle_scan'), value_type=bool),
+                'obstacle_scan_topic': '/scan',
+                'obstacle_scan_frame': 'base_footprint',
+                'obstacle_scan_timeout_s': 0.40,
+                'reaction_time_s': 0.30,
+                'brake_decel_mps2': 0.50,
+                'clearance_m': 0.30,
+                'side_margin_m': 0.18,
+                'scan_min_hits': 2,
             }],
         ),
         # Final actuator boundary. It clamps x/y/yaw, has a 0.2 s watchdog and

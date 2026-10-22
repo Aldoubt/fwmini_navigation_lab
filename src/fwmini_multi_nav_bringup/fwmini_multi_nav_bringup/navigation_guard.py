@@ -6,6 +6,8 @@ import time
 import rclpy
 from agt_robot_interfaces.msg import AdapterStatus, LocalizationStatus
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+from .safety_scan import evaluate_scan
 from rclpy.clock import Clock, ClockType
 from rclpy.node import Node
 from std_msgs.msg import String
@@ -36,6 +38,18 @@ class FwminiNavigationGuard(Node):
         self.declare_parameter('search_max_linear_x', 0.10)
         self.declare_parameter('search_max_linear_y', 0.0)
         self.declare_parameter('search_max_angular_z', 0.20)
+        # Always fail closed for field profiles: any stale/missing scan blocks
+        # BOTH Nav2 route commands and localization search commands.
+        self.declare_parameter('require_fresh_obstacle_scan', True)
+        self.declare_parameter('obstacle_scan_topic', '/scan')
+        self.declare_parameter('obstacle_scan_frame', 'base_footprint')
+        self.declare_parameter('obstacle_scan_timeout_s', 0.40)
+        self.declare_parameter('reaction_time_s', 0.30)
+        self.declare_parameter('brake_decel_mps2', 0.50)
+        self.declare_parameter('clearance_m', 0.30)
+        self.declare_parameter('side_margin_m', 0.18)
+        self.declare_parameter('scan_min_hits', 2)
+        self.declare_parameter('rotation_clearance_m', 0.55)
 
         self._localization = None
         self._localization_rx = None
@@ -47,12 +61,26 @@ class FwminiNavigationGuard(Node):
         self._manual_rx = None
         self._current = (0.0, 0.0, 0.0)
         self._last_tick = time.monotonic()
+        self._scan = None
+        self._scan_rx = None
+        self._scan_stamp_ns = None
+        self._scan_error = 'WAIT_OBSTACLE_SCAN'
+        for name in ('obstacle_scan_timeout_s', 'reaction_time_s',
+                     'brake_decel_mps2', 'clearance_m', 'side_margin_m',
+                     'rotation_clearance_m'):
+            value = float(self._p(name))
+            if not isfinite(value) or value <= 0:
+                raise ValueError(f'{name} must be positive and finite')
+        if not 1 <= int(self._p('scan_min_hits')) <= 10:
+            raise ValueError('scan_min_hits must be 1..10')
         self._state = 'WAIT_LOCALIZATION'
 
         self._cmd_pub = self.create_publisher(Twist, self._p('output_topic'), 10)
         self._status_pub = self.create_publisher(String, self._p('status_topic'), 10)
         self.create_subscription(Twist, self._p('input_topic'), self._on_command, 10)
         self.create_subscription(Twist, self._p('manual_search_topic'), self._on_manual_command, 10)
+        self.create_subscription(
+            LaserScan, str(self._p('obstacle_scan_topic')), self._on_scan, 10)
         self.create_subscription(
             LocalizationStatus, self._p('localization_topic'), self._on_localization, 10)
         self.create_subscription(
@@ -85,6 +113,41 @@ class FwminiNavigationGuard(Node):
             return
         self._manual_command = values
         self._manual_rx = time.monotonic()
+
+    def _on_scan(self, msg):
+        # Evaluate in the base_footprint plane. A wrong frame is not clear.
+        self._scan_rx = time.monotonic()
+        stamp_ns = int(msg.header.stamp.sec) * 1_000_000_000 + int(msg.header.stamp.nanosec)
+        if msg.header.frame_id != str(self._p('obstacle_scan_frame')):
+            self._scan, self._scan_error = None, 'OBSTACLE_SCAN_FRAME_MISMATCH'
+        elif stamp_ns <= 0 or (
+                self._scan_stamp_ns is not None and stamp_ns <= self._scan_stamp_ns):
+            self._scan, self._scan_error = None, 'OBSTACLE_SCAN_STAMP_INVALID'
+        else:
+            self._scan, self._scan_error = msg, ''
+        self._scan_stamp_ns = stamp_ns
+
+    def _scan_gate(self, command, now):
+        if not bool(self._p('require_fresh_obstacle_scan')):
+            return None  # only for explicit offline diagnostics, not field mode
+        if self._scan_rx is None:
+            return 'WAIT_OBSTACLE_SCAN'
+        if now - self._scan_rx > float(self._p('obstacle_scan_timeout_s')):
+            return 'STALE_OBSTACLE_SCAN'
+        if self._scan is None:
+            return self._scan_error or 'INVALID_OBSTACLE_SCAN'
+        scan = self._scan
+        decision = evaluate_scan(
+            angle_min=scan.angle_min, angle_increment=scan.angle_increment,
+            ranges=scan.ranges, range_min=scan.range_min, range_max=scan.range_max,
+            forward_mps=command[0], angular_radps=command[2],
+            clearance_m=float(self._p('clearance_m')),
+            reaction_s=float(self._p('reaction_time_s')),
+            brake_mps2=float(self._p('brake_decel_mps2')),
+            side_margin_m=float(self._p('side_margin_m')),
+            minimum_hits=int(self._p('scan_min_hits')),
+            rotation_clearance_m=float(self._p('rotation_clearance_m')))
+        return decision.reason if decision.blocked else None
 
     def _local_search_ready(self, now):
         if not bool(self._p('allow_local_search')):
@@ -161,6 +224,14 @@ class FwminiNavigationGuard(Node):
             self._current = (0.0, 0.0, 0.0)
             target_command = None
             limits = None
+
+        # This is the final software gate AFTER Nav2/local-search selection.
+        # Scan failures/obstacles cause immediate zero, not slewed deceleration.
+        scan_block = self._scan_gate(target_command or (0., 0., 0.), now)
+        if scan_block is not None:
+            state = scan_block
+            self._current = (0., 0., 0.)
+            target_command = None
 
         if target_command is None:
             output = self._current
