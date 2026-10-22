@@ -19,6 +19,9 @@ class Adapter : public rclcpp::Node {
                   declare_parameter("max_angular_z", 0.5),
                   declare_parameter("cmd_timeout", 0.2)};
     gate_ = std::make_unique<CommandGate>(limits);
+    // Opt-in trial mode: enabling never resurrects an old command.
+    // Timeout-to-zero, limits, and explicit disable remain active.
+    gate_->enable(declare_parameter("initial_motion_enabled", false));
     units_ = std::make_unique<Units>(declare_parameter<std::string>("vendor_linear_unit", "mps"),
                                     declare_parameter<std::string>("vendor_angular_unit", "degps"));
     gear_ = declare_parameter<int>("control_gear", 0);

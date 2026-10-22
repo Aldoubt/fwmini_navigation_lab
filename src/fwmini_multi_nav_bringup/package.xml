@@ -9,10 +9,22 @@
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>agt_robot_interfaces</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
   <exec_depend>lifecycle_msgs</exec_depend>
   <exec_depend>rclpy</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>agt_system_bringup</exec_depend>
+  <exec_depend>agt_navigation_runtime</exec_depend>
+  <exec_depend>fwmini_chassis_adapter</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>rviz2</exec_depend>
   <exec_depend>slam_toolbox</exec_depend>
   <exec_depend>rtabmap_slam</exec_depend>
   <exec_depend>cartographer_ros</exec_depend>

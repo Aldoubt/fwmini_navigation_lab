@@ -6,3 +6,15 @@ __pycache__/
 
 # Per-session ROS bag/log records, never commit automatically
 /evidence/field_workbench/
+
+
+# Prevent future accidental uploads of field datasets or secrets
+/test_results/
+*.db3
+*.mcap
+*.bag
+*.pcd
+*.pgm
+.env
+*.pem
+*.key

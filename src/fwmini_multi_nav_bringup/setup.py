@@ -11,6 +11,8 @@ setup(
         (join("share", name, "launch"), glob("launch/*.launch.py")),
         (join("share", name, "config", "cartographer"), glob("config/cartographer/*.lua")),
         (join("share", name, "config", "slam_toolbox"), glob("config/slam_toolbox/*.yaml")),
+        (join("share", name, "config", "nav2"), glob("config/nav2/*.yaml")),
+        (join("share", name, "config", "field_trial"), glob("config/field_trial/*.yaml")),
         (join("share", name, "config"), glob("config/*.json")),
     ],
     install_requires=["setuptools"], zip_safe=True,
@@ -19,5 +21,7 @@ setup(
     license="Apache-2.0",
     entry_points={"console_scripts": [
         "fwmini_preflight = fwmini_multi_nav_bringup.preflight:main",
+        "fwmini_navigation_guard = fwmini_multi_nav_bringup.navigation_guard:main",
+        "fwmini_livox_clock = fwmini_multi_nav_bringup.livox_clock:main",
     ]},
 )

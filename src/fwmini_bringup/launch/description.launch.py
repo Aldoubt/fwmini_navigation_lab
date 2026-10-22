@@ -34,7 +34,7 @@ def start(context):
 
 
 def generate_launch_description():
-    default = str(Path(get_package_share_directory('fwmini_bringup')) / 'config/geometry.preview.yaml')
+    default = str(Path(get_package_share_directory('fwmini_bringup')) / 'config/geometry.field_trial.yaml')
     return LaunchDescription([
         DeclareLaunchArgument('geometry_file', default_value=default),
         DeclareLaunchArgument('preview', default_value='true', choices=['true', 'false']),

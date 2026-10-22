@@ -1,0 +1,15 @@
+fwmini_chassis_adapter:
+  ros__parameters:
+    # Only the FW-mini localization-aware velocity gate may feed this adapter.
+    # The adapter also clamps, watches the command timeout, and defaults disabled.
+    command_topic: /agt/base/cmd_vel
+    vendor_command_topic: /ctrl_cmd
+    max_linear_x: 0.3  # m/s; adapter clamp, not a chassis capability limit
+    max_linear_y: 0.3  # m/s
+    max_angular_z: 0.5 # rad/s
+    cmd_timeout: 0.2
+    publish_rate: 50.0
+    vendor_linear_unit: mps
+    vendor_angular_unit: degps
+    # FW-mini manual V1.0.4 ctrl_cmd: 06=4T4D; 08=lateral mode. First trial uses 4T4D.
+    control_gear: 6

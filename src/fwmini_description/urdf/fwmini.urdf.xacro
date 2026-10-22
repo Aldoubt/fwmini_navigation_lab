@@ -6,6 +6,16 @@
     <visual><origin xyz="0 0 ${g['body']['height_m']/2}"/><geometry><box size="${g['body']['length_m']} ${g['body']['width_m']} ${g['body']['height_m']}"/></geometry></visual>
     <collision><origin xyz="0 0 ${g['body']['height_m']/2}"/><geometry><box size="${g['body']['length_m']} ${g['body']['width_m']} ${g['body']['height_m']}"/></geometry></collision>
   </link>
+  <!-- Field-trial LiDAR pose loaded from the same geometry file as the chassis model. -->
+  <xacro:if value="${'lidar_mount' in g}">
+    <link name="livox_frame"/>
+    <joint name="lidar_mount" type="fixed">
+      <parent link="base_link"/>
+      <child link="livox_frame"/>
+      <origin xyz="${g['lidar_mount']['xyz_m'][0]} ${g['lidar_mount']['xyz_m'][1]} ${g['lidar_mount']['xyz_m'][2]}"
+              rpy="${g['lidar_mount']['rpy_rad'][0]} ${g['lidar_mount']['rpy_rad'][1]} ${g['lidar_mount']['rpy_rad'][2]}"/>
+    </joint>
+  </xacro:if>
   <link name="femto_bolt_link"/>
   <joint name="camera_mount" type="fixed"><parent link="base_link"/><child link="femto_bolt_link"/><origin xyz="${g['camera_mount']['xyz_m'][0]} ${g['camera_mount']['xyz_m'][1]} ${g['camera_mount']['xyz_m'][2]}" rpy="${g['camera_mount']['rpy_rad'][0]} ${g['camera_mount']['rpy_rad'][1]} ${g['camera_mount']['rpy_rad'][2]}"/></joint>
   <link name="femto_bolt_color_optical_frame"/>
