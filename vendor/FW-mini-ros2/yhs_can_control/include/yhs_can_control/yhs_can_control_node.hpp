@@ -57,6 +57,7 @@ namespace yhs
 
     rclcpp::Publisher<yhs_can_interfaces::msg::ChassisInfoFb>::SharedPtr chassis_info_fb_publisher_;
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+    rclcpp::Publisher<yhs_can_interfaces::msg::IoFb>::SharedPtr io_fb_publisher_;
 
     void io_cmd_callback(const yhs_can_interfaces::msg::IoCmd::SharedPtr io_cmd_msg);
 

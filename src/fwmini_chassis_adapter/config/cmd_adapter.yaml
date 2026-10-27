@@ -1,12 +1,15 @@
 fwmini_chassis_adapter:
   ros__parameters:
-    command_topic: /cmd_vel
-    vendor_command_topic: /ctrl_cmd
-    max_linear_x: 0.3  # m/s, provisional experiment limits
-    max_linear_y: 0.3  # m/s
-    max_angular_z: 0.5 # rad/s
-    cmd_timeout: 0.2   # steady-clock seconds
+    # Protected input is TwistStamped with a session epoch, never raw /cmd_vel.
+    max_linear_x: 0.05
+    max_linear_y: 0.03
+    max_angular_z: 0.15
+    cmd_timeout: 0.2
+    feedback_timeout: 0.2
+    switch_timeout: 3.0
+    confirm_duration: 0.06
+    confirm_samples: 3
     publish_rate: 50.0
-    vendor_linear_unit: mps  # YHS ROS driver packs mm/s internally
+    vendor_linear_unit: mps
     vendor_angular_unit: degps
-    control_gear: 0  # Must confirm gear/mode with vendor before physical motion.
+    control_gear: 0  # Always disabled at startup. CtrlCmd modes are selected explicitly: 6 / 8.

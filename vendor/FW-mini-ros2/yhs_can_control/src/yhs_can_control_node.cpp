@@ -29,6 +29,8 @@ namespace yhs
 
     chassis_info_fb_publisher_ = node_->create_publisher<yhs_can_interfaces::msg::ChassisInfoFb>("chassis_info_fb", 1);
 
+    io_fb_publisher_ = node_->create_publisher<yhs_can_interfaces::msg::IoFb>("/fwmini/io_fb", 1);
+
     odom_pub_ = node_->create_publisher<nav_msgs::msg::Odometry>("odom", 1);
   }
 
@@ -377,6 +379,7 @@ whether the can line is connected correctly, and whether the chassis is powered 
           if (crc == recv_frame.data[7])
           {
             chassis_info_msg.io_fb = msg;
+            io_fb_publisher_->publish(msg);  // Independent freshness, only after BCC validation.
           }
 
           break;
